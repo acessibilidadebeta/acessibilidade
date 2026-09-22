@@ -1,0 +1,10 @@
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AppProvider } from './contexts/AppContext';
+import { Layout } from './components/layout/Layout';
+import { Dashboard } from './pages/Dashboard';
+import { Versions, VersionDetail, Issues, IssueDetail } from './pages/Records';
+import { Knowledge, Process, Analytics, Reports, Login } from './pages/Info';
+import './styles.css';
+ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><BrowserRouter><AppProvider><Routes><Route element={<Layout/>}><Route index element={<Dashboard/>}/><Route path="versions" element={<Versions/>}/><Route path="versions/:id" element={<VersionDetail/>}/><Route path="issues" element={<Issues/>}/><Route path="issues/:id" element={<IssueDetail/>}/><Route path="knowledge" element={<Knowledge/>}/><Route path="process" element={<Process/>}/><Route path="analytics" element={<Analytics/>}/><Route path="reports" element={<Reports/>}/><Route path="login" element={<Login/>}/><Route path="*" element={<div className="card"><h2>Página não encontrada</h2><a href="/">Voltar ao painel</a></div>}/></Route></Routes></AppProvider></BrowserRouter></React.StrictMode>);

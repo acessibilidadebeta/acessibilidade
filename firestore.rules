@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function role() { return signedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role : 'none'; }
+    function canRead() { return role() in ['viewer', 'editor', 'admin']; }
+    function canEdit() { return role() in ['editor', 'admin']; }
+    function isAdmin() { return role() == 'admin'; }
+    match /users/{userId} {
+      allow read: if signedIn() && (request.auth.uid == userId || isAdmin());
+      allow create, update, delete: if isAdmin();
+    }
+    match /{collectionName}/{documentId} {
+      allow read: if collectionName in ['versions','prs','issues','regressionTests','knowledgeArticles','auditLogs'] && canRead();
+      allow create, update: if collectionName in ['versions','prs','issues','regressionTests','knowledgeArticles'] && canEdit();
+      allow delete: if collectionName in ['versions','prs','issues','regressionTests','knowledgeArticles'] && isAdmin();
+    }
+  }
+}
