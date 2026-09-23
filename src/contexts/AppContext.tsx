@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useContext, useCallback, useEffect, useState, type ReactNode } from 'react';
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, updateProfile, type User } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db, firebaseConfigured } from '../lib/firebase';
@@ -12,7 +12,7 @@ const demoProfile:Profile={name:'Pessoa visitante',email:'',role:import.meta.env
 export function AppProvider({children}:{children:ReactNode}){
   const [data,setData]=useState<Dataset|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState('');
   const [profile,setProfile]=useState<Profile|null>(firebaseConfigured?null:demoProfile);
-  async function refresh(){try{setLoading(true);setError('');setData(await loadData());}catch{setError('Não foi possível carregar os dados. Confira a conexão e as regras do Firestore.');setData(null);}finally{setLoading(false);}}
+  const refresh=useCallback(async()=>{try{setLoading(true);setError('');setData(await loadData(profile?.role==='admin'));}catch{setError('Não foi possível carregar os dados. Confira a conexão e as regras do Firestore.');setData(null);}finally{setLoading(false);}},[profile?.role]);
   useEffect(()=>{
     if(!auth||!db){void refresh();return;}
     return onAuthStateChanged(auth,async(user:User|null)=>{
@@ -25,11 +25,11 @@ export function AppProvider({children}:{children:ReactNode}){
         if(!account){account={name:user.displayName||user.email||'Usuário',email:user.email||'',role:email===OWNER_EMAIL?'admin':'pending',createdAt:new Date().toISOString().slice(0,10)};await setDoc(ref,account);}
         const role:Role=email===OWNER_EMAIL?'admin':account.role;
         setProfile({name:account.name||user.email||'Usuário',email:user.email||'',role});
-        if(role==='pending'||role==='blocked'){setData(null);}else{setData(await loadData());}
+        if(role==='pending'||role==='blocked'){setData(null);}else{setData(await loadData(role==='admin'));}
       }catch{setProfile({name:user.email||'Usuário',email:user.email||'',role:'blocked'});setData(null);setError('Não foi possível validar sua permissão de acesso.');}
       finally{setLoading(false);}
     });
-  },[]);
+  },[refresh]);
   async function save<K extends keyof Dataset>(name:K,item:Dataset[K][number]){if(!profile||profile.role==='viewer'||profile.role==='pending'||profile.role==='blocked')throw new Error('Sem permissão para editar.');await saveItem(name,item);await refresh();}
   async function remove<K extends keyof Dataset>(name:K,id:string){if(!profile||profile.role!=='admin')throw new Error('Apenas administradores podem excluir.');await removeItem(name,id);await refresh();}
   async function login(email:string,password:string){if(!auth)throw new Error('O Firebase não está configurado neste ambiente.');await signInWithEmailAndPassword(auth,email,password);}
