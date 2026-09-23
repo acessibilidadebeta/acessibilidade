@@ -48,3 +48,7 @@ O portal usa regiões semânticas, link para pular ao conteúdo, labels, foco vi
 ## Fluxo atual de bugs
 
 O foco atual é abrir e acompanhar bugs. Os status disponíveis são Aberto, Fechado, Resolvido, Cancelado e Aguardando reteste. O painel principal apresenta gráficos separados para Android e iOS. A interface de PRs foi retirada por enquanto.
+
+## Controle de registros
+
+Usuários `editor` e `admin` podem criar e editar bugs e versões. Usuários `admin` também podem excluir. No modo demonstração, o perfil local é administrativo para permitir validar o CRUD completo. Uma versão com bugs vinculados não pode ser excluída.
