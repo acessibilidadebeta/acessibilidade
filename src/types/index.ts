@@ -1,4 +1,5 @@
-export type Role = 'viewer' | 'editor' | 'admin';
+export type Role = 'pending' | 'viewer' | 'editor' | 'admin' | 'blocked';
+export type UserAccount = { id:string; name:string; email:string; role:Role; createdAt:string };
 export type Status = 'open' | 'closed' | 'resolved' | 'cancelled' | 'retest';
 export type Platform = 'Android' | 'iOS' | 'Ambos';
 export type Version = { id:string; name:string; date:string; status:string; platforms:Platform[]; scenarios:number; history:string[] };
@@ -6,4 +7,4 @@ export type PullRequest = { id:string; number:string; title:string; versionId:st
 export type Issue = { id:string; jiraKey:string; title:string; description:string; versionId:string; platform:Platform; journey:string; component:string; status:Status; severity:'Baixa'|'Média'|'Alta'|'Crítica'; date:string; notes:string; history:string[]; evidence?: { name:string; url:string; kind:'image'|'video'|'document' }[] };
 export type RegressionTest = { id:string; versionId:string; platform:Platform; status:Status; scenarios:number };
 export type Article = { id:string; title:string; problem:string; impact:string; identify:string; test:string; expected:string; example:string; related:string[] };
-export type Dataset = { versions:Version[]; prs:PullRequest[]; issues:Issue[]; regressionTests:RegressionTest[]; knowledgeArticles:Article[] };
+export type Dataset = { users:UserAccount[]; versions:Version[]; prs:PullRequest[]; issues:Issue[]; regressionTests:RegressionTest[]; knowledgeArticles:Article[] };

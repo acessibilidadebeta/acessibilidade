@@ -52,3 +52,8 @@ O foco atual é abrir e acompanhar bugs. Os status disponíveis são Aberto, Fec
 ## Controle de registros
 
 Usuários `editor` e `admin` podem criar e editar bugs e versões. Usuários `admin` também podem excluir. No modo demonstração, o perfil local é administrativo para permitir validar o CRUD completo. Uma versão com bugs vinculados não pode ser excluída.
+
+
+## Administração de usuários
+
+A conta proprietária é `vinizac@hotmail.com`. Novos usuários usam “Solicitar acesso” e recebem o perfil `pending`. O proprietário ou outro administrador aprova como leitor, editor ou administrador na página **Usuários**. “Excluir acesso” altera o perfil para `blocked`, impedindo o uso do painel. A exclusão definitiva do Firebase Authentication requer backend com Admin SDK. Publique novamente o arquivo `firestore.rules` após esta atualização.
